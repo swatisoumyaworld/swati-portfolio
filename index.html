@@ -3,11 +3,13 @@
 <head>
   <title>Swati Soumya Portfolio</title>
 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     body{
       margin:0;
       background:#111;
-      overflow:hidden;
+      font-family:sans-serif;
     }
 
     iframe{
@@ -18,13 +20,12 @@
 
     .download{
       position:fixed;
-      top:20px;
-      right:20px;
+      top:15px;
+      right:15px;
       background:white;
-      padding:10px 16px;
+      padding:10px 14px;
       border-radius:8px;
       text-decoration:none;
-      font-family:sans-serif;
       font-weight:bold;
       color:black;
       z-index:10;
@@ -38,7 +39,9 @@
 Download PDF
 </a>
 
-<iframe src="/portfolio.pdf#toolbar=0"></iframe>
+<iframe
+src="https://mozilla.github.io/pdf.js/web/viewer.html?file=https://swati-soumya-portfolio.vercel.app/portfolio.pdf">
+</iframe>
 
 </body>
 </html>
