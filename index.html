@@ -1,46 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <title>Swati Soumya Portfolio</title>
 
-<title>Swati Soumya Portfolio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <style>
+    body{
+      margin:0;
+      background:#0f0f10;
+      font-family:sans-serif;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+    }
 
-<style>
+    .download{
+      position:fixed;
+      top:18px;
+      right:18px;
+      background:white;
+      padding:10px 16px;
+      border-radius:8px;
+      text-decoration:none;
+      font-weight:bold;
+      color:black;
+      z-index:10;
+      box-shadow:0 4px 15px rgba(0,0,0,0.25);
+    }
 
-body{
-margin:0;
-background:#111;
-display:flex;
-flex-direction:column;
-align-items:center;
-}
+    #viewer{
+      width:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding-top:80px;
+    }
 
-canvas{
-margin:20px 0;
-max-width:900px;
-width:95%;
-box-shadow:0 10px 30px rgba(0,0,0,0.5);
-background:white;
-}
+    canvas{
+      width:95%;
+      max-width:900px;
+      margin:40px 0;
+      background:white;
+      box-shadow:0 12px 35px rgba(0,0,0,0.35);
+      border-radius:6px;
+      opacity:0;
+      transform:translateY(40px);
+      transition:all 0.8s ease;
+    }
 
-.download{
-position:fixed;
-top:15px;
-right:15px;
-background:white;
-padding:10px 14px;
-border-radius:8px;
-text-decoration:none;
-font-weight:bold;
-color:black;
-z-index:10;
-}
+    canvas.visible{
+      opacity:1;
+      transform:translateY(0);
+    }
 
-</style>
-
+  </style>
 </head>
 
 <body>
@@ -57,28 +73,43 @@ const url = '/portfolio.pdf';
 
 pdfjsLib.getDocument(url).promise.then(pdf => {
 
-for(let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++){
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add("visible");
+      }
+    });
+  },{threshold:0.15});
 
-pdf.getPage(pageNumber).then(page => {
+  for(let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++){
 
-const viewport = page.getViewport({scale:1.5});
+    pdf.getPage(pageNumber).then(page => {
 
-const canvas = document.createElement('canvas');
-const context = canvas.getContext('2d');
+      const containerWidth = window.innerWidth * 0.92;
 
-canvas.height = viewport.height;
-canvas.width = viewport.width;
+      const viewport = page.getViewport({scale:1});
+      const scale = containerWidth / viewport.width;
 
-document.getElementById('viewer').appendChild(canvas);
+      const scaledViewport = page.getViewport({scale});
 
-page.render({
-canvasContext: context,
-viewport: viewport
-});
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
 
-});
+      canvas.height = scaledViewport.height;
+      canvas.width = scaledViewport.width;
 
-}
+      document.getElementById('viewer').appendChild(canvas);
+
+      page.render({
+        canvasContext: context,
+        viewport: scaledViewport
+      });
+
+      observer.observe(canvas);
+
+    });
+
+  }
 
 });
 
